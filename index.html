@@ -18,7 +18,7 @@
 <style>
 :root{
   --paper:#F4F6F0; --surface:#FFFFFF; --ink:#1E2A22; --muted:#66736A; --line:#DCE2D7;
-  --leaf:#2E6A4A; --leaf-soft:#E2EEE6; --tag:#F2D64B; --tag-ink:#2A2610; --warn:#A8670E; --danger:#C2412F;
+  --leaf:#2E6A4A; --leaf-soft:#E2EEE6; --tag:#F2D64B; --tag-ink:#2A2610; --warn:#A8670E; --danger:#C2412F; --other:#7446B0; --other-soft:#EEE6F8;
   --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --body:"Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   color-scheme: light;
@@ -29,13 +29,13 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#131915; --surface:#1B231E; --ink:#E7ECE5; --muted:#95A39A; --line:#2B352F;
-    --leaf:#82C59F; --leaf-soft:#22352A; --tag:#E5C840; --tag-ink:#231F08; --warn:#E0A64A; --danger:#F07A66;
+    --leaf:#82C59F; --leaf-soft:#22352A; --tag:#E5C840; --tag-ink:#231F08; --warn:#E0A64A; --danger:#F07A66; --other:#C4A6F0; --other-soft:#2D2539;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#131915; --surface:#1B231E; --ink:#E7ECE5; --muted:#95A39A; --line:#2B352F;
-  --leaf:#82C59F; --leaf-soft:#22352A; --tag:#E5C840; --tag-ink:#231F08; --warn:#E0A64A; --danger:#F07A66;
+  --leaf:#82C59F; --leaf-soft:#22352A; --tag:#E5C840; --tag-ink:#231F08; --warn:#E0A64A; --danger:#F07A66; --other:#C4A6F0; --other-soft:#2D2539;
   color-scheme: dark;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -97,7 +97,7 @@ li.row:first-child{border-top:0}
 .main{border:0;background:none;text-align:left;padding:4px 2px;min-width:0}
 .name{display:block;font-weight:600;overflow-wrap:anywhere}
 .meta{display:block;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:1px}
-.meta .noprice{color:var(--warn);font-weight:600}
+.noprice{color:var(--warn);font-weight:600}
 .meta .note{font-style:italic}
 .row.in .name{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
 .qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -136,6 +136,68 @@ dialog::backdrop{background:rgba(10,20,14,.45)}
 
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px;display:flex;gap:14px;align-items:center;font-size:15px;max-width:calc(100% - 32px)}
 .toast button{background:none;border:0;color:var(--tag);font-weight:700;padding:2px}
+/* history */
+.hnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px}
+.hnav h2{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em;margin:0;text-align:center}
+.hnav .icon{font-size:28px;line-height:1;color:var(--ink);border:1px solid var(--line);background:var(--surface)}
+.hnav .icon:disabled{opacity:.3;cursor:default}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:12px}
+.card.otherb{border-color:var(--other);background:var(--other-soft);padding:10px 14px;font-size:14px}
+.card .label{font-size:14px;font-weight:600;color:var(--muted)}
+.big{font-family:var(--display);font-weight:800;font-size:42px;letter-spacing:-.03em;line-height:1.05;margin:2px 0 10px;font-variant-numeric:tabular-nums}
+.card .bar{height:10px;border-radius:5px}
+.bar.over span{background:var(--danger)}
+.card p{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.card p b{color:var(--ink)}
+.card p .up{color:var(--danger);font-weight:600}
+.card p .down{color:var(--leaf);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.tile small{display:block;font-size:13px;color:var(--muted)}
+.tile b{display:block;font-family:var(--display);font-size:21px;font-variant-numeric:tabular-nums}
+.tile em{font-style:normal;font-size:13px;color:var(--muted)}
+.tile.warn b{color:var(--warn)}
+.who{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--leaf-soft);color:var(--leaf);vertical-align:1px;margin-left:6px;white-space:nowrap}
+.who.other{background:var(--other-soft);color:var(--other)}
+.chip.other[aria-pressed="true"]{background:var(--other);border-color:var(--other);color:var(--surface)}
+.catrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:10px 12px;border-top:1px solid var(--line)}
+.catrow:first-child{border-top:0}
+.catrow .track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.catrow .track span{display:block;height:100%;border-radius:3px;background:var(--leaf)}
+li.hrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 12px;border-top:1px solid var(--line)}
+li.hrow:first-child{border-top:0}
+li.hrow .meta{margin:0}
+.amt{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.amt.muted{color:var(--muted);font-weight:500}
+details.trip{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-top:8px;overflow:hidden}
+details.trip.other{border-left:4px solid var(--other)}
+details.trip summary{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px;cursor:pointer;list-style:none}
+details.trip summary::-webkit-details-marker{display:none}
+details.trip summary .name::before{content:"▸ ";color:var(--muted)}
+details.trip[open] summary .name::before{content:"▾ "}
+details.trip ul{border:0;border-top:1px solid var(--line);border-radius:0}
+.tripfoot{padding:8px 12px;border-top:1px solid var(--line);text-align:right}
+.chart{margin-top:4px}
+.plot{position:relative;display:flex;align-items:flex-end;gap:6px;height:140px;border-bottom:1px solid var(--line)}
+.mcol{flex:1;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px;border:0;background:none;padding:0;border-radius:6px 6px 0 0}
+.mcol.sel{background:var(--leaf-soft)}
+.mbar{width:min(24px,42%);min-height:2px;background:var(--leaf);border-radius:4px 4px 0 0;position:relative}
+.mbar.other{background:var(--other)}
+.mbar i{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-style:normal;font-size:11px;color:var(--muted);white-space:nowrap;padding-bottom:2px;font-variant-numeric:tabular-nums}
+.bline{position:absolute;left:0;right:0;border-top:1.5px dashed var(--warn);pointer-events:none}
+.bline span{position:absolute;right:0;top:-17px;font-size:11px;color:var(--warn);font-weight:600}
+.mlabels{display:flex;gap:6px;margin-top:4px}
+.mlabels span{flex:1;text-align:center;font-size:12px;color:var(--muted)}
+.mlabels span.sel{color:var(--ink);font-weight:700}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--leaf);margin-right:5px;vertical-align:-1px}
+.legend i.other{background:var(--other)}
+.hactions{display:flex;flex-direction:column;gap:8px;margin-top:24px}
+.hactions .btn{flex:none}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.opt input{width:18px;height:18px;margin-top:3px;accent-color:var(--leaf);flex:none}
+.opt small{display:block;color:var(--muted);font-size:13px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -147,17 +209,20 @@ dialog::backdrop{background:rgba(10,20,14,.45)}
       <h1>Compras</h1>
       <span class="status" id="status" data-s="busy">Guardado en este teléfono</span>
     </div>
+    <div id="needHead">
     <div class="tag" aria-live="polite"><span class="tag-label">Total estimado</span><span class="tag-amt" id="total">S/ 0.00</span></div>
     <p class="summary" id="summary"></p>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+    </div>
   </header>
 
   <div class="controls">
     <div class="tabs" role="tablist">
       <button role="tab" id="tab-need" data-tab="need" aria-selected="true">Por comprar<span class="n" id="n-need"></span></button>
       <button role="tab" id="tab-archived" data-tab="archived" aria-selected="false">Archivo<span class="n" id="n-arch"></span></button>
+      <button role="tab" id="tab-hist" data-tab="history" aria-selected="false">Historial</button>
     </div>
-    <div class="searchrow">
+    <div class="searchrow" id="searchRow">
       <input class="search" id="q" type="search" placeholder="Buscar productos" autocomplete="off" aria-label="Buscar productos">
       <label class="toggle" id="hideWrap"><input type="checkbox" id="hideCart"> Ocultar en carrito</label>
     </div>
@@ -165,6 +230,7 @@ dialog::backdrop{background:rgba(10,20,14,.45)}
   </div>
 
   <main id="list"></main>
+  <section id="hist" hidden></section>
 
   <details class="notes" id="notesBox">
     <summary>Notas</summary>
@@ -216,6 +282,33 @@ dialog::backdrop{background:rgba(10,20,14,.45)}
   </div>
 </dialog>
 
+<dialog id="importDlg">
+  <form class="sheet" id="importForm">
+    <h3>¿De quién es esta copia?</h3>
+    <p class="summary" id="importInfo"></p>
+    <label class="opt"><input type="radio" name="iw" value="mine"><span><b>Es mía</b><small>Reemplaza tu lista y tu historial con esta copia.</small></span></label>
+    <label class="opt"><input type="radio" name="iw" value="other"><span><b>Es de otra persona</b><small>Sus compras se guardan aparte en el Historial, marcadas con su nombre. Tu lista no cambia.</small></span></label>
+    <label class="field" id="iNameWrap"><span>Nombre de esa persona</span><input id="iName" placeholder="Ej. Hermano" autocomplete="off"></label>
+    <div class="actions">
+      <button type="button" class="btn" id="cancelImport">Cancelar</button>
+      <button type="submit" class="btn primary">Importar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="histDlg">
+  <form class="sheet" id="histForm">
+    <h3>Ajustes del historial</h3>
+    <label class="field"><span>Tu nombre</span><input id="hMe" placeholder="Yo" autocomplete="off"></label>
+    <label class="field"><span>Presupuesto mensual (S/)</span><input id="hBudget" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Sin presupuesto"></label>
+    <p class="hint">Tu nombre va en las copias que descargas, para que quien las importe sepa que son tuyas.</p>
+    <div class="actions">
+      <button type="button" class="btn" id="cancelHist">Cancelar</button>
+      <button type="submit" class="btn primary">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
 <div class="toast" id="toast" hidden><span id="toastMsg"></span><button id="toastUndo">Deshacer</button></div>
 
 <script>
@@ -241,14 +334,33 @@ const newId=()=>"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6
 
 const SEED={"items": [{"id": "s00", "name": "Jabón", "cat": "limpieza", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s01", "name": "Shampoo", "cat": "limpieza", "price": 12.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s02", "name": "Acondicionador", "cat": "limpieza", "price": 12.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s03", "name": "Papel higiénico x24", "cat": "limpieza", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s04", "name": "Papel toalla", "cat": "limpieza", "price": 7.2, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s05", "name": "Detergente Opal 4 kg", "cat": "limpieza", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s06", "name": "Lejía (chica, ya hay)", "cat": "limpieza", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s07", "name": "Trapeador", "cat": "limpieza", "price": 7.9, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s08", "name": "Lavavajilla Sapolio 800 g", "cat": "limpieza", "price": 4.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s09", "name": "Downy 2.8 L", "cat": "limpieza", "price": 13.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s10", "name": "Jabón para ropa Bolívar 190 g", "cat": "limpieza", "price": 5.7, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s11", "name": "Poett 3.8 L", "cat": "limpieza", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s12", "name": "Esponja verde", "cat": "limpieza", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s13", "name": "Escobilla, etc.", "cat": "limpieza", "price": 4.4, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s14", "name": "Pan por unidad (mini croissant)", "cat": "desayuno", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s15", "name": "Pan de molde", "cat": "desayuno", "price": 11.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s16", "name": "Café", "cat": "desayuno", "price": 19.2, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s17", "name": "Mantequilla Laive 180 g", "cat": "desayuno", "price": 13.6, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s18", "name": "Mermelada 800 g", "cat": "desayuno", "price": 11.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s19", "name": "Milo", "cat": "desayuno", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s20", "name": "Cereal azul Jona", "cat": "desayuno", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s21", "name": "Té", "cat": "desayuno", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s22", "name": "Panetón", "cat": "desayuno", "price": 16.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s23", "name": "Azúcar 5 kg", "cat": "despensa", "price": 20.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s24", "name": "Arroz Faraón 5 kg", "cat": "despensa", "price": 27.6, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s25", "name": "Aceite", "cat": "despensa", "price": 6.1, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s26", "name": "Fideos spaghetti 950 g x2 (promo)", "cat": "despensa", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s27", "name": "Tallarín linguini 1 kg Don Vittorio", "cat": "despensa", "price": 10.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s28", "name": "Fideos para sopa", "cat": "despensa", "price": 1.5, "qty": 4, "status": "need", "inCart": false, "note": ""}, {"id": "s29", "name": "Lenteja bebé marrón 1 kg", "cat": "despensa", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s30", "name": "Harina", "cat": "despensa", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s31", "name": "Atún", "cat": "despensa", "price": 5.8, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s32", "name": "Pomarola", "cat": "despensa", "price": 3.5, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s33", "name": "Aceituna", "cat": "despensa", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s34", "name": "Durazno en lata", "cat": "despensa", "price": 8.5, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s35", "name": "Puré de manzana", "cat": "despensa", "price": 8.5, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s36", "name": "Pasas", "cat": "despensa", "price": 15, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s37", "name": "Mazamorra", "cat": "despensa", "price": 3.8, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s38", "name": "Ajinomen", "cat": "despensa", "price": 1.6, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s39", "name": "Mayonesa 850 g", "cat": "salsas", "price": 13.6, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s40", "name": "Ketchup Alacena 380 g", "cat": "salsas", "price": 4.7, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s41", "name": "BBQ 360 g", "cat": "salsas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s42", "name": "Mostaza Alacena 400 g", "cat": "salsas", "price": 5.5, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s43", "name": "Aderezo", "cat": "salsas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s44", "name": "Doña Gusta", "cat": "salsas", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s45", "name": "Ajinosillao", "cat": "salsas", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s46", "name": "Sal de cocina", "cat": "salsas", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s47", "name": "Leche 1 L caja", "cat": "lacteos", "price": 16.2, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s48", "name": "Yogurt", "cat": "lacteos", "price": 10.7, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s49", "name": "Huevos", "cat": "lacteos", "price": 22.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s50", "name": "Queso fresco light", "cat": "lacteos", "price": 13.49, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s51", "name": "Queso (Danlac chocolate)", "cat": "lacteos", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s52", "name": "Hot dog x15", "cat": "carnes", "price": 12.9, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s53", "name": "Jamonada", "cat": "carnes", "price": 11.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s54", "name": "Pollo (Maty)", "cat": "carnes", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s55", "name": "Carne molida 500 g", "cat": "carnes", "price": 15.9, "qty": 3, "status": "need", "inCart": false, "note": ""}, {"id": "s56", "name": "Bistec", "cat": "carnes", "price": 16.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s57", "name": "Huachana", "cat": "carnes", "price": 4.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s58", "name": "Cabanossi", "cat": "carnes", "price": 3.5, "qty": 3, "status": "need", "inCart": false, "note": ""}, {"id": "s59", "name": "Apanado de pollo", "cat": "carnes", "price": 3, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s60", "name": "Chorizo", "cat": "carnes", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s61", "name": "Papas 2 kg", "cat": "verduras", "price": 2.79, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s62", "name": "Verduras (Maty)", "cat": "verduras", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s63", "name": "Frugos 1.5 L", "cat": "bebidas", "price": 17.45, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s64", "name": "Jugo del Valle", "cat": "bebidas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s65", "name": "Coca-Cola", "cat": "bebidas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s66", "name": "Vino", "cat": "bebidas", "price": 29.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s67", "name": "Zuko", "cat": "bebidas", "price": 1.15, "qty": 4, "status": "need", "inCart": false, "note": ""}, {"id": "s68", "name": "Gatorade", "cat": "bebidas", "price": 2.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s69", "name": "Galletas soda", "cat": "snacks", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s70", "name": "Galletas varias", "cat": "snacks", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s71", "name": "Galleta integral", "cat": "snacks", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s72", "name": "Glasita galletas", "cat": "snacks", "price": 8.4, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s73", "name": "Galleta de agua", "cat": "snacks", "price": 4.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s74", "name": "Chips Ahoy", "cat": "snacks", "price": 7.5, "qty": 1, "status": "need", "inCart": false, "note": ""}], "notes": "Precios de pasta: Cabello 2 · Lingüini x2 4.4 · Spaghetti 7 · Lingüini grueso 4.4 · Grano de oro x2 1.5 · Pasta corta 1.5", "updatedAt": 0};
 let state=null;
-let ui={tab:"need",cat:"all",q:"",hideCart:false};
+let ui={tab:"need",cat:"all",q:"",hideCart:false,person:"me",month:null};
 let loaded=false;
 const LS_STATE="groceries-state-v1", LS_UI="groceries-ui-v1";
 
 try{const u=JSON.parse(localStorage.getItem(LS_UI)||"null"); if(u) ui=Object.assign(ui,u,{q:""});}catch(e){}
 try{const s=JSON.parse(localStorage.getItem(LS_STATE)||"null"); if(s&&Array.isArray(s.items)){state=normalize(s);}}catch(e){}
 if(!state) state=normalize(SEED);
+if(ensurePlan()){try{localStorage.setItem(LS_STATE,JSON.stringify(state));}catch(e){}}
 
+function numOrNull(v){return (typeof v==="number"&&isFinite(v)&&v>=0)?v:null;}
+function normLine(x){
+  return {id:String(x.id||""), name:String(x.name||"Producto"), cat:String(x.cat||"otros"),
+    price:numOrNull(x.price), qty:Math.max(1,parseInt(x.qty,10)||1), planned:!!x.planned};
+}
+function normHistory(h){
+  return (Array.isArray(h)?h:[]).filter(t=>t&&isFinite(Number(t.at))&&Array.isArray(t.items)).map(t=>{
+    const at=Number(t.at), items=t.items.map(normLine);
+    return {id:String(t.id||newId()), at, month:monthKey(at), items, total:items.reduce((s,i)=>s+lineTotal(i),0)};
+  });
+}
+function normPlans(p){
+  const out={};
+  if(p&&typeof p==="object") Object.keys(p).forEach(m=>{
+    if(/^\d{4}-\d{2}$/.test(m)&&p[m]&&Array.isArray(p[m].items)) out[m]={setAt:Number(p[m].setAt)||0, items:p[m].items.map(normLine)};
+  });
+  return out;
+}
 function normalize(d){
   const items=(Array.isArray(d.items)?d.items:[]).map(x=>({
     id:String(x.id||newId()), name:String(x.name||"Producto"), cat:String(x.cat||"otros"),
@@ -256,7 +368,12 @@ function normalize(d){
     qty:Math.max(1,parseInt(x.qty,10)||1), status:x.status==="archived"?"archived":"need",
     inCart:!!x.inCart, note:String(x.note||"")
   }));
-  return {items,notes:String(d.notes||""),updatedAt:Number(d.updatedAt)||0};
+  const others=(Array.isArray(d.others)?d.others:[]).filter(o=>o&&o.name).map(o=>({
+    name:String(o.name), importedAt:Number(o.importedAt)||0, budget:numOrNull(o.budget),
+    history:normHistory(o.history), plans:normPlans(o.plans)
+  }));
+  return {items,notes:String(d.notes||""),updatedAt:Number(d.updatedAt)||0,
+    history:normHistory(d.history), plans:normPlans(d.plans), budget:numOrNull(d.budget), me:String(d.me||""), others};
 }
 function saveUI(){try{localStorage.setItem(LS_UI,JSON.stringify({tab:ui.tab,cat:ui.cat,hideCart:ui.hideCart}));}catch(e){}}
 
@@ -328,6 +445,10 @@ function render(){
   $("tab-need").setAttribute("aria-selected",ui.tab==="need"); $("tab-archived").setAttribute("aria-selected",ui.tab==="archived");
   $("hideWrap").hidden=ui.tab!=="need"; $("hideCart").checked=ui.hideCart;
   if(document.activeElement!==$("notes")) $("notes").value=state.notes;
+  const H=ui.tab==="history";
+  $("tab-hist").setAttribute("aria-selected",H);
+  $("needHead").hidden=H; $("searchRow").hidden=H; $("chips").hidden=H; $("list").hidden=H; $("hist").hidden=!H;
+  if(H){renderHist(); return;}
 
   const pool=ui.tab==="need"?need:arch;
   const counts={}; pool.forEach(i=>counts[i.cat]=(counts[i.cat]||0)+1);
@@ -390,8 +511,8 @@ function toast(msg,undoable){
   $("toastMsg").textContent=msg; $("toastUndo").hidden=!undoable; $("toast").hidden=false;
   clearTimeout(toastT); toastT=setTimeout(()=>{$("toast").hidden=true; undoSnap=null;},4500);
 }
-function snapshot(){undoSnap=JSON.stringify(state.items);}
-$("toastUndo").onclick=()=>{ if(undoSnap){state.items=JSON.parse(undoSnap); undoSnap=null; commit();} $("toast").hidden=true; };
+function snapshot(){undoSnap=JSON.stringify({items:state.items,history:state.history,plans:state.plans,others:state.others});}
+$("toastUndo").onclick=()=>{ if(undoSnap){Object.assign(state,JSON.parse(undoSnap)); undoSnap=null; commit();} $("toast").hidden=true; };
 
 $("list").addEventListener("click",e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
@@ -456,9 +577,199 @@ $("addBtn").onclick=()=>openEdit(null);
 $("finishBtn").onclick=()=>{
   const inCart=state.items.filter(i=>i.inCart);
   if(!inCart.length){toast("El carrito está vacío",false);return;}
-  snapshot(); inCart.forEach(i=>i.inCart=false); commit();
-  toast(`Compra terminada · ${inCart.length} productos quitados del carrito`,true);
+  snapshot(); ensurePlan();
+  const m=monthKey(Date.now()), planned=new Set(state.plans[m].items.map(i=>i.id));
+  const items=inCart.map(i=>({id:i.id,name:i.name,cat:i.cat,price:i.price,qty:i.qty,planned:planned.has(i.id)}));
+  const total=items.reduce((s,i)=>s+lineTotal(i),0);
+  state.history.push({id:newId(),at:Date.now(),month:m,items,total});
+  inCart.forEach(i=>i.inCart=false); commit();
+  toast(`Compra guardada en el Historial · ${items.length} productos · ${money(total)}`,true);
 };
+
+/* ---------- history ---------- */
+function monthKey(t){const d=new Date(t); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");}
+function shiftMonth(m,n){const [y,mo]=m.split("-").map(Number); return monthKey(new Date(y,mo-1+n,1));}
+function monthLabel(m,short){
+  const [y,mo]=m.split("-").map(Number);
+  const t=new Date(y,mo-1,1).toLocaleDateString("es",short?{month:"short"}:{month:"long",year:"numeric"}).replace(".","");
+  return t.charAt(0).toUpperCase()+t.slice(1);
+}
+function planSnap(){
+  return {setAt:Date.now(), items:state.items.filter(i=>i.status==="need").map(i=>({id:i.id,name:i.name,cat:i.cat,price:i.price,qty:i.qty,planned:true}))};
+}
+// The month's plan is the "Por comprar" list as it stood when the month began.
+function ensurePlan(){const m=monthKey(Date.now()); if(!state.plans[m]){state.plans[m]=planSnap(); return true;} return false;}
+
+function people(){
+  return [{key:"me",name:state.me||"Yo",mine:true,history:state.history,plans:state.plans,budget:state.budget}]
+    .concat(state.others.map(o=>({key:"o:"+o.name.toLowerCase(),name:o.name,mine:false,history:o.history,plans:o.plans,budget:o.budget,importedAt:o.importedAt})));
+}
+function personStats(p,m){
+  const plan=p.plans[m], planIds=plan?new Set(plan.items.map(i=>i.id)):null;
+  const trips=p.history.filter(t=>t.month===m).map(t=>Object.assign({who:p},t));
+  const bought=new Map(), cats={}; let spent=0, noPrice=0;
+  trips.forEach(t=>t.items.forEach(it=>{
+    const v=lineTotal(it); spent+=v; if(it.price==null) noPrice++;
+    cats[it.cat]=(cats[it.cat]||0)+v;
+    const a=bought.get(it.id)||{id:it.id,name:it.name,cat:it.cat,qty:0,total:0,noPrice:false,who:p,
+      planned:planIds?planIds.has(it.id):it.planned};
+    a.qty+=it.qty; a.total+=v; if(it.price==null) a.noPrice=true; bought.set(it.id,a);
+  }));
+  const items=[...bought.values()];
+  const extras=items.filter(i=>!i.planned);
+  const missed=plan?plan.items.filter(i=>!bought.has(i.id)).map(i=>Object.assign({who:p},i)):[];
+  return {trips,spent,noPrice,cats,items,extras,missed,hasPlan:!!plan,
+    planTotal:plan?plan.items.reduce((s,i)=>s+lineTotal(i),0):0,
+    extraTotal:extras.reduce((s,i)=>s+i.total,0), missedTotal:missed.reduce((s,i)=>s+lineTotal(i),0)};
+}
+function combine(sel,m){
+  const r={trips:[],spent:0,noPrice:0,cats:{},items:[],extras:[],missed:[],hasPlan:false,planTotal:0,extraTotal:0,missedTotal:0};
+  sel.forEach(p=>{const s=personStats(p,m);
+    ["trips","items","extras","missed"].forEach(k=>r[k]=r[k].concat(s[k]));
+    ["spent","noPrice","planTotal","extraTotal","missedTotal"].forEach(k=>r[k]+=s[k]);
+    r.hasPlan=r.hasPlan||s.hasPlan;
+    Object.keys(s.cats).forEach(c=>r.cats[c]=(r.cats[c]||0)+s.cats[c]);
+  });
+  r.trips.sort((a,b)=>b.at-a.at);
+  return r;
+}
+const whoTag=(p,show)=>show?`<span class="who${p.mine?"":" other"}">${esc(p.name)}</span>`:"";
+const shortMoney=n=>n>=1000?"S/ "+(n/1000).toFixed(1).replace(".0","")+"k":"S/ "+Math.round(n);
+
+function renderHist(){
+  const all=people(), now=monthKey(Date.now());
+  if(!ui.month||ui.month>now) ui.month=now;
+  if(ui.person!=="all"&&!all.some(p=>p.key===ui.person)) ui.person="me";
+  const sel=ui.person==="all"?all:all.filter(p=>p.key===ui.person);
+  const single=sel.length===1?sel[0]:null, tags=!single;
+  const m=ui.month, prevM=shiftMonth(m,-1);
+  const S=combine(sel,m), P=combine(sel,prevM);
+  const earliest=all.reduce((min,p)=>p.history.concat(Object.keys(p.plans).map(k=>({month:k}))).reduce((a,t)=>t.month<a?t.month:a,min),now);
+  let h=`<div class="hnav">
+    <button class="icon" data-h="prev" aria-label="Mes anterior" ${m<=earliest?"disabled":""}>‹</button>
+    <h2>${monthLabel(m)}</h2>
+    <button class="icon" data-h="next" aria-label="Mes siguiente" ${m>=now?"disabled":""}>›</button></div>`;
+  if(all.length>1){
+    h+=`<div class="chips">`+all.map(p=>`<button class="chip${p.mine?"":" other"}" data-person="${esc(p.key)}" aria-pressed="${ui.person===p.key}">${esc(p.name)}</button>`).join("")+
+      `<button class="chip" data-person="all" aria-pressed="${ui.person==="all"}">Todos</button></div>`;
+  }
+  if(single&&!single.mine){
+    h+=`<div class="card otherb">Registros de <b>${esc(single.name)}</b>${single.importedAt?` · importados el ${new Date(single.importedAt).toLocaleDateString("es",{day:"numeric",month:"short"})}`:""}. Para actualizarlos, vuelve a importar su copia.</div>`;
+  }
+
+  // headline
+  const budget=single?single.budget:null;
+  h+=`<div class="card"><div class="label">${single?(single.mine?"Gastaste":"Gastó "+esc(single.name)):"Gasto de todos"}</div><div class="big">${money(S.spent)}</div>`;
+  if(budget){
+    const over=S.spent>budget;
+    h+=`<div class="bar${over?" over":""}" aria-hidden="true"><span style="width:${Math.min(100,S.spent/budget*100)}%"></span></div>
+      <p>${over?`<span class="up">Pasado por ${money(S.spent-budget)}</span>`:`Quedan <b>${money(budget-S.spent)}</b>`} de un presupuesto de ${money(budget)}</p>`;
+  }else if(single&&single.mine){
+    h+=`<p><button class="linkish" data-h="settings">Fijar un presupuesto mensual</button></p>`;
+  }
+  if(P.spent>0){
+    const d=S.spent-P.spent, pct=Math.round(Math.abs(d)/P.spent*100);
+    h+=`<p>Frente a ${monthLabel(prevM,true).toLowerCase()} (${money(P.spent)}): ${Math.abs(d)<0.005?"igual":`<span class="${d>0?"up":"down"}">${d>0?"▲ "+money(d)+" más":"▼ "+money(-d)+" menos"} (${pct}%)</span>`}</p>`;
+  }
+  if(S.noPrice) h+=`<p><span class="noprice">${S.noPrice} ${S.noPrice===1?"producto comprado no tenía precio":"productos comprados no tenían precio"}</span> y no suman al total.</p>`;
+  h+=`</div>`;
+
+  h+=`<div class="tiles">
+    <div class="tile"><small>Plan del mes</small><b>${S.hasPlan?money(S.planTotal):"—"}</b><em>estimado</em></div>
+    <div class="tile"><small>Compras</small><b>${S.trips.length}</b><em>${S.items.length} productos</em></div>
+    <div class="tile${S.extras.length?" warn":""}"><small>Extras</small><b>${money(S.extraTotal)}</b><em>${S.extras.length} fuera del plan</em></div>
+    <div class="tile"><small>No comprado</small><b>${S.missed.length}</b><em>${S.missed.length?"≈ "+money(S.missedTotal):"del plan"}</em></div>
+  </div>`;
+
+  if(!S.trips.length){
+    h+=`<div class="empty"><p>${m===now?"Todavía no hay compras este mes.":"No hay compras registradas en "+monthLabel(m).toLowerCase()+"."}</p>
+      ${m===now&&(!single||single.mine)?`<p class="hint">Marca los productos en el carrito y toca <b>Terminar compra</b>: la compra se guarda aquí con su fecha y total.</p>`:""}</div>`;
+  }else{
+    // by category
+    const cats=CATS.filter(c=>S.cats[c.id]>0).sort((a,b)=>S.cats[b.id]-S.cats[a.id]);
+    const max=cats.length?S.cats[cats[0].id]:0;
+    if(cats.length&&S.spent>0){
+      h+=`<section class="group"><h2><span>Por categoría</span></h2><ul>`+cats.map(c=>`<li class="catrow">
+        <span>${c.emoji} ${esc(c.label)}</span><span class="amt">${money(S.cats[c.id])} <span class="amt muted">${Math.round(S.cats[c.id]/S.spent*100)}%</span></span>
+        <span class="track"><span style="width:${S.cats[c.id]/max*100}%"></span></span></li>`).join("")+`</ul></section>`;
+    }
+    if(S.extras.length){
+      const ex=S.extras.slice().sort((a,b)=>b.total-a.total);
+      h+=`<section class="group"><h2><span>Extras</span><small>${money(S.extraTotal)}</small></h2><ul>`+ex.map(i=>`<li class="hrow">
+        <span><span class="name">${esc(i.name)}${whoTag(i.who,tags)}</span><span class="meta">${i.qty>1?"× "+i.qty:catOf(i.cat).label}</span></span>
+        <span class="amt">${i.noPrice&&!i.total?'<span class="noprice">Sin precio</span>':money(i.total)}</span></li>`).join("")+
+        `</ul><p class="hint">Compras que no estaban en tu lista al empezar el mes.</p></section>`;
+    }
+  }
+  if(S.missed.length){
+    const mi=S.missed.slice().sort((a,b)=>a.name.localeCompare(b.name,"es"));
+    h+=`<details class="trip"><summary><span class="name">No comprado (${mi.length})</span><span class="amt muted">≈ ${money(S.missedTotal)}</span></summary><ul>`+mi.map(i=>`<li class="hrow">
+      <span><span class="name">${esc(i.name)}${whoTag(i.who,tags)}</span><span class="meta">${catOf(i.cat).emoji} ${esc(catOf(i.cat).label)}</span></span>
+      <span class="amt muted">${i.price==null?"—":money(lineTotal(i))}</span></li>`).join("")+`</ul></details>`;
+  }
+  if(S.trips.length){
+    h+=`<section class="group"><h2><span>Compras del mes</span><small>${S.trips.length}</small></h2></section>`;
+    S.trips.forEach(t=>{
+      const d=new Date(t.at);
+      const when=d.toLocaleDateString("es",{weekday:"short",day:"numeric",month:"short"})+" · "+d.toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});
+      const its=t.items.slice().sort((a,b)=>lineTotal(b)-lineTotal(a));
+      h+=`<details class="trip${t.who.mine?"":" other"}"><summary><span><span class="name">${when}</span>${whoTag(t.who,tags||!t.who.mine)}<span class="meta">${t.items.length} productos</span></span><span class="amt">${money(t.total)}</span></summary><ul>`+
+        its.map(i=>`<li class="hrow"><span><span class="name">${esc(i.name)}</span><span class="meta">${i.price==null?'<span class="noprice">Sin precio</span>':(i.qty>1?money(i.price)+" × "+i.qty:catOf(i.cat).label)}</span></span><span class="amt">${i.price==null?"—":money(lineTotal(i))}</span></li>`).join("")+
+        `</ul>${t.who.mine?`<div class="tripfoot"><button class="btn danger" style="flex:none" data-h="deltrip" data-t="${esc(t.id)}">Borrar esta compra</button></div>`:""}</details>`;
+    });
+  }
+
+  // last 6 months
+  const months=[]; for(let i=5;i>=0;i--) months.push(shiftMonth(m,-i));
+  const vals=months.map(mm=>sel.map(p=>personStats(p,mm).spent));
+  const top=Math.max(1,...vals.flat(),budget||0)*1.18;
+  if(vals.flat().some(v=>v>0)){
+    h+=`<section class="group"><h2><span>Últimos 6 meses</span></h2><div class="card chart"><div class="plot">`+
+      (budget?`<div class="bline" style="bottom:${budget/top*100}%"><span>Presupuesto</span></div>`:"")+
+      months.map((mm,mi)=>`<button class="mcol${mm===m?" sel":""}" data-month="${mm}" aria-label="${monthLabel(mm)}">`+
+        vals[mi].map((v,pi)=>`<span class="mbar${sel[pi].mine?"":" other"}" style="height:${v/top*100}%">${v>0&&single?`<i>${shortMoney(v)}</i>`:""}</span>`).join("")+`</button>`).join("")+
+      `</div><div class="mlabels">`+months.map(mm=>`<span class="${mm===m?"sel":""}">${monthLabel(mm,true)}</span>`).join("")+`</div>`+
+      (sel.length>1?`<div class="legend">`+sel.map(p=>`<span><i class="${p.mine?"":"other"}"></i>${esc(p.name)}</span>`).join("")+`</div>`:"")+
+      `</div></section>`;
+  }
+
+  h+=`<div class="hactions">
+    <button class="btn" data-h="addother">Importar registros de otra persona</button>
+    ${single&&!single.mine?`<button class="btn danger" data-h="rmother">Quitar registros de ${esc(single.name)}</button>`:""}
+    ${(!single||single.mine)&&m===now?`<button class="btn" data-h="replan">Rehacer el plan con la lista actual</button>`:""}
+    <button class="btn" data-h="settings">Tu nombre y presupuesto</button>
+  </div>
+  <p class="hint">El plan del mes es tu lista “Por comprar” tal como estaba al empezar el mes. Lo que compres fuera de ella cuenta como extra.</p>`;
+  $("hist").innerHTML=h;
+}
+
+$("hist").addEventListener("click",e=>{
+  const pb=e.target.closest("[data-person]"); if(pb){ui.person=pb.dataset.person; return render();}
+  const mb=e.target.closest("[data-month]"); if(mb){ui.month=mb.dataset.month; return render();}
+  const b=e.target.closest("[data-h]"); if(!b) return;
+  const a=b.dataset.h;
+  if(a==="prev"){ui.month=shiftMonth(ui.month,-1); render();}
+  else if(a==="next"){ui.month=shiftMonth(ui.month,1); render();}
+  else if(a==="settings"){ $("hMe").value=state.me; $("hBudget").value=state.budget!=null?state.budget:""; $("histDlg").showModal(); }
+  else if(a==="addother"){ importAs="other"; $("importFile").click(); }
+  else if(a==="rmother"){
+    const k=ui.person; const o=state.others.find(x=>"o:"+x.name.toLowerCase()===k); if(!o) return;
+    snapshot(); state.others=state.others.filter(x=>x!==o); ui.person="me"; commit(); toast(`Registros de ${o.name} quitados`,true);
+  }
+  else if(a==="replan"){ snapshot(); state.plans[monthKey(Date.now())]=planSnap(); commit(); toast("Plan del mes actualizado con tu lista actual",true); }
+  else if(a==="deltrip"){
+    const t=state.history.find(x=>x.id===b.dataset.t); if(!t) return;
+    snapshot(); state.history=state.history.filter(x=>x!==t); commit(); toast(`Compra de ${money(t.total)} borrada`,true);
+  }
+});
+$("cancelHist").onclick=()=>$("histDlg").close();
+$("histForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  state.me=$("hMe").value.trim();
+  const v=parseFloat($("hBudget").value.trim().replace(",","."));
+  state.budget=isFinite(v)&&v>0?v:null;
+  $("histDlg").close(); commit();
+});
 
 /* share */
 function shareText(){
@@ -482,19 +793,53 @@ $("copyShare").onclick=async()=>{
 
 /* backup */
 $("exportBtn").onclick=()=>{
-  const blob=new Blob([JSON.stringify(state,null,1)],{type:"application/json"});
+  const out=Object.assign({app:"compras",version:2,owner:state.me,exportedAt:Date.now()},state);
+  const blob=new Blob([JSON.stringify(out,null,1)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-  a.download="compras-"+new Date().toISOString().slice(0,10)+".json";
+  const who=state.me.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  a.download="compras-"+(who?who+"-":"")+new Date().toISOString().slice(0,10)+".json";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
-$("importBtn").onclick=()=>$("importFile").click();
+let pendingImport=null, importAs="mine";
+$("importBtn").onclick=()=>{importAs="mine"; $("importFile").click();};
 $("importFile").onchange=async e=>{
   const f=e.target.files[0]; if(!f) return;
   try{ const d=JSON.parse(await f.text()); if(!Array.isArray(d.items)) throw 0;
-    snapshot(); state=normalize(d); commit(); toast("Copia restaurada",true);
+    pendingImport=d;
+    const trips=Array.isArray(d.history)?d.history.length:0;
+    const when=Number(d.exportedAt||d.updatedAt);
+    $("importInfo").textContent=(d.owner?`Copia de ${d.owner}`:"Copia")+(when?` del ${new Date(when).toLocaleDateString("es",{day:"numeric",month:"short",year:"numeric"})}`:"")+
+      ` · ${d.items.length} productos · ${trips} ${trips===1?"compra registrada":"compras registradas"}`;
+    const other=importAs==="other"||(d.owner&&state.me&&d.owner.trim().toLowerCase()!==state.me.trim().toLowerCase());
+    document.querySelector(`#importForm input[value="${other?"other":"mine"}"]`).checked=true;
+    $("iName").value=d.owner&&d.owner!==state.me?d.owner:"";
+    $("iNameWrap").hidden=!other;
+    $("importDlg").showModal();
   }catch(_){ toast("Ese archivo no es una copia válida",false); }
   e.target.value="";
 };
+$("importForm").addEventListener("change",e=>{ if(e.target.name==="iw"){ $("iNameWrap").hidden=e.target.value!=="other"; if(e.target.value==="other") $("iName").focus(); } });
+$("cancelImport").onclick=()=>{pendingImport=null; $("importDlg").close();};
+$("importForm").addEventListener("submit",e=>{
+  e.preventDefault(); const d=pendingImport; if(!d) return;
+  const as=document.querySelector('#importForm input[name="iw"]:checked').value;
+  if(as==="mine"){
+    snapshot(); const n=normalize(d);
+    // older copies have no history: keep what is already here
+    if(!Array.isArray(d.history)){n.history=state.history; n.plans=state.plans; n.budget=state.budget; n.me=state.me;}
+    if(!Array.isArray(d.others)) n.others=state.others;
+    state=n; ensurePlan(); $("importDlg").close(); pendingImport=null; commit(); toast("Copia restaurada",true);
+  }else{
+    const name=$("iName").value.trim(); if(!name){$("iName").focus(); return;}
+    const o=normalize({items:[],others:[{name,importedAt:Date.now(),budget:d.budget,history:d.history,plans:d.plans}]}).others[0];
+    snapshot();
+    const k=name.toLowerCase(), at=state.others.findIndex(x=>x.name.toLowerCase()===k);
+    if(at>=0) state.others[at]=o; else state.others.push(o);
+    ui.tab="history"; ui.person="o:"+k; saveUI();
+    $("importDlg").close(); pendingImport=null; commit(); window.scrollTo({top:0});
+    toast(o.history.length?`Registros de ${name} importados`:`${name} todavía no tiene compras registradas`,true);
+  }
+});
 render();
 startSync();
 })();
