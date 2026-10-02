@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compras</title>
+<meta name="theme-color" content="#2E6A4A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Compras">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F6F0; --surface:#FFFFFF; --ink:#1E2A22; --muted:#66736A; --line:#DCE2D7;
+  --leaf:#2E6A4A; --leaf-soft:#E2EEE6; --tag:#F2D64B; --tag-ink:#2A2610; --warn:#A8670E; --danger:#C2412F;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131915; --surface:#1B231E; --ink:#E7ECE5; --muted:#95A39A; --line:#2B352F;
+    --leaf:#82C59F; --leaf-soft:#22352A; --tag:#E5C840; --tag-ink:#231F08; --warn:#E0A64A; --danger:#F07A66;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131915; --surface:#1B231E; --ink:#E7ECE5; --muted:#95A39A; --line:#2B352F;
+  --leaf:#82C59F; --leaf-soft:#22352A; --tag:#E5C840; --tag-ink:#231F08; --warn:#E0A64A; --danger:#F07A66;
+  color-scheme: dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--leaf);outline-offset:2px;border-radius:6px}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 120px}
+
+/* header */
+.top{padding:18px 0 8px}
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.02em;margin:0}
+.status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.status[data-s="ok"]::before{background:var(--leaf)}
+.status[data-s="busy"]::before{background:var(--tag)}
+.status[data-s="local"]::before{background:var(--warn)}
+
+.tag{position:relative;margin:18px 0 6px 6px;display:inline-flex;flex-direction:column;gap:2px;
+  background:var(--tag);color:var(--tag-ink);padding:14px 22px 14px 40px;
+  clip-path:polygon(18px 0,100% 0,100% 100%,18px 100%,0 50%);transform:rotate(-2deg);transform-origin:left center}
+.tag::before{content:"";position:absolute;left:16px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--paper)}
+.tag-label{font-size:14px;font-weight:600}
+.tag-amt{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.summary{margin:10px 0 8px;color:var(--muted);font-size:14px}
+.summary b{color:var(--ink);font-weight:600}
+.linkish{background:none;border:0;padding:0;color:var(--warn);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--leaf);width:0;transition:width .3s ease}
+
+/* controls */
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding:12px 0 8px;margin-top:8px}
+.tabs{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:12px}
+.tabs button{flex:1;border:0;background:transparent;padding:8px;border-radius:9px;font-weight:600;font-size:15px;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.tabs .n{font-weight:500;color:var(--muted);margin-left:4px;font-variant-numeric:tabular-nums}
+.searchrow{display:flex;gap:8px;margin-top:10px;align-items:center}
+.search{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;font-size:16px}
+.toggle{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);white-space:nowrap}
+.toggle input{width:18px;height:18px;accent-color:var(--leaf)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* list */
+.group{margin-top:18px}
+.group h2{font-family:var(--display);font-weight:700;font-size:18px;margin:0 0 6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.group h2 small{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+ul{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+li.row{display:grid;grid-template-columns:40px minmax(0,1fr) auto 38px;align-items:center;gap:4px;padding:8px 6px 8px 4px;border-top:1px solid var(--line)}
+li.row:first-child{border-top:0}
+.check{width:40px;height:40px;border:0;background:none;display:grid;place-items:center;padding:0}
+.check i{width:24px;height:24px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center}
+.row.in .check i{background:var(--leaf);border-color:var(--leaf)}
+.row.in .check i::after{content:"";width:6px;height:11px;border:solid var(--surface);border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.main{border:0;background:none;text-align:left;padding:4px 2px;min-width:0}
+.name{display:block;font-weight:600;overflow-wrap:anywhere}
+.meta{display:block;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:1px}
+.meta .noprice{color:var(--warn);font-weight:600}
+.meta .note{font-style:italic}
+.row.in .name{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.qty button{width:32px;height:34px;border:0;background:none;font-size:18px;line-height:1;color:var(--leaf);font-weight:700}
+.qty span{min-width:22px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.icon{width:38px;height:38px;border:0;background:none;display:grid;place-items:center;color:var(--muted);border-radius:10px;padding:0}
+.icon svg{width:20px;height:20px}
+.restore{border:1px solid var(--line);background:var(--leaf-soft);color:var(--leaf);border-radius:10px;padding:7px 10px;font-weight:600;font-size:14px}
+li.row.arch{grid-template-columns:minmax(0,1fr) auto 38px;padding-left:12px}
+.empty{text-align:center;color:var(--muted);padding:40px 16px}
+.empty p{margin:0 0 14px}
+
+.notes{margin-top:26px}
+.notes summary{font-family:var(--display);font-weight:700;font-size:18px;cursor:pointer;padding:4px 0}
+.notes textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:10px 12px;font-size:15px;resize:vertical;margin-top:8px}
+
+/* bottom bar */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.dock-in{max-width:640px;margin:0 auto;display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 12px;font-weight:600;font-size:15px;flex:1}
+.btn.primary{background:var(--leaf);border-color:var(--leaf);color:var(--surface);flex:1.3}
+.btn.danger{color:var(--danger)}
+
+/* sheet */
+dialog{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:18px;width:min(560px,calc(100% - 24px));max-height:calc(100% - 40px)}
+dialog::backdrop{background:rgba(10,20,14,.45)}
+.sheet{padding:20px}
+.sheet h3{font-family:var(--display);font-size:22px;margin:0 0 14px}
+.field{display:block;margin-bottom:12px}
+.field span{display:block;font-size:14px;font-weight:600;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;font-size:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sheet .actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.sheet .actions .btn{flex:1 1 40%}
+.share-text{width:100%;min-height:220px;font-size:14px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:10px}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 14px;display:flex;gap:14px;align-items:center;font-size:15px;max-width:calc(100% - 32px)}
+.toast button{background:none;border:0;color:var(--tag);font-weight:700;padding:2px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="title-row">
+      <h1>Compras</h1>
+      <span class="status" id="status" data-s="busy">Guardado en este teléfono</span>
+    </div>
+    <div class="tag" aria-live="polite"><span class="tag-label">Total estimado</span><span class="tag-amt" id="total">S/ 0.00</span></div>
+    <p class="summary" id="summary"></p>
+    <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+  </header>
+
+  <div class="controls">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-need" data-tab="need" aria-selected="true">Por comprar<span class="n" id="n-need"></span></button>
+      <button role="tab" id="tab-archived" data-tab="archived" aria-selected="false">Archivo<span class="n" id="n-arch"></span></button>
+    </div>
+    <div class="searchrow">
+      <input class="search" id="q" type="search" placeholder="Buscar productos" autocomplete="off" aria-label="Buscar productos">
+      <label class="toggle" id="hideWrap"><input type="checkbox" id="hideCart"> Ocultar en carrito</label>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <main id="list"></main>
+
+  <details class="notes" id="notesBox">
+    <summary>Notas</summary>
+    <textarea id="notes" placeholder="Precios, marcas, recordatorios…"></textarea>
+    <p class="summary">Tu lista se guarda en este teléfono. Haz una copia de vez en cuando:</p>
+    <div class="dock-in" style="margin:0">
+      <button type="button" class="btn" id="exportBtn">Descargar copia</button>
+      <button type="button" class="btn" id="importBtn">Restaurar copia</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </details>
+</div>
+
+<div class="dock"><div class="dock-in">
+  <button class="btn" id="shareBtn">Compartir lista</button>
+  <button class="btn" id="finishBtn">Terminar compra</button>
+  <button class="btn primary" id="addBtn">Agregar producto</button>
+</div></div>
+
+<dialog id="editDlg">
+  <form class="sheet" method="dialog" id="editForm">
+    <h3 id="editTitle">Agregar producto</h3>
+    <label class="field"><span>Nombre</span><input id="fName" required autocomplete="off"></label>
+    <label class="field"><span>Categoría</span><select id="fCat"></select></label>
+    <div class="two">
+      <label class="field"><span>Precio c/u (S/)</span><input id="fPrice" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Sin precio"></label>
+      <label class="field"><span>Cantidad</span><input id="fQty" type="number" inputmode="numeric" step="1" min="1" value="1"></label>
+    </div>
+    <label class="field"><span>Nota</span><input id="fNote" placeholder="Marca, tamaño, tienda…" autocomplete="off"></label>
+    <div class="actions">
+      <button type="button" class="btn" id="cancelEdit">Cancelar</button>
+      <button type="submit" class="btn primary" id="saveEdit">Guardar</button>
+    </div>
+    <div class="actions" id="editExtra">
+      <button type="button" class="btn" id="archEdit">Archivar</button>
+      <button type="button" class="btn danger" id="delEdit">Eliminar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="shareDlg">
+  <div class="sheet">
+    <h3>Compartir lista</h3>
+    <textarea class="share-text" id="shareText" readonly></textarea>
+    <div class="actions">
+      <button type="button" class="btn" id="closeShare">Cerrar</button>
+      <button type="button" class="btn primary" id="copyShare">Copiar</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" hidden><span id="toastMsg"></span><button id="toastUndo">Deshacer</button></div>
+
+<script>
+(function(){
+"use strict";
+const CATS=[
+  {id:"limpieza",label:"Limpieza y cuidado personal",emoji:"🧼"},
+  {id:"desayuno",label:"Desayuno y panadería",emoji:"🥐"},
+  {id:"despensa",label:"Despensa",emoji:"🥫"},
+  {id:"salsas",label:"Salsas y condimentos",emoji:"🧂"},
+  {id:"lacteos",label:"Lácteos y huevos",emoji:"🥛"},
+  {id:"carnes",label:"Carnes y embutidos",emoji:"🥩"},
+  {id:"verduras",label:"Verduras y frutas",emoji:"🥔"},
+  {id:"bebidas",label:"Bebidas",emoji:"🧃"},
+  {id:"snacks",label:"Snacks y galletas",emoji:"🍪"},
+  {id:"otros",label:"Otros",emoji:"🛍️"}
+];
+const catOf=id=>CATS.find(c=>c.id===id)||CATS[CATS.length-1];
+const $=id=>document.getElementById(id);
+const money=n=>"S/ "+(Math.round(n*100)/100).toFixed(2);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const newId=()=>"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+const SEED={"items": [{"id": "s00", "name": "Jabón", "cat": "limpieza", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s01", "name": "Shampoo", "cat": "limpieza", "price": 12.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s02", "name": "Acondicionador", "cat": "limpieza", "price": 12.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s03", "name": "Papel higiénico x24", "cat": "limpieza", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s04", "name": "Papel toalla", "cat": "limpieza", "price": 7.2, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s05", "name": "Detergente Opal 4 kg", "cat": "limpieza", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s06", "name": "Lejía (chica, ya hay)", "cat": "limpieza", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s07", "name": "Trapeador", "cat": "limpieza", "price": 7.9, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s08", "name": "Lavavajilla Sapolio 800 g", "cat": "limpieza", "price": 4.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s09", "name": "Downy 2.8 L", "cat": "limpieza", "price": 13.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s10", "name": "Jabón para ropa Bolívar 190 g", "cat": "limpieza", "price": 5.7, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s11", "name": "Poett 3.8 L", "cat": "limpieza", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s12", "name": "Esponja verde", "cat": "limpieza", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s13", "name": "Escobilla, etc.", "cat": "limpieza", "price": 4.4, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s14", "name": "Pan por unidad (mini croissant)", "cat": "desayuno", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s15", "name": "Pan de molde", "cat": "desayuno", "price": 11.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s16", "name": "Café", "cat": "desayuno", "price": 19.2, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s17", "name": "Mantequilla Laive 180 g", "cat": "desayuno", "price": 13.6, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s18", "name": "Mermelada 800 g", "cat": "desayuno", "price": 11.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s19", "name": "Milo", "cat": "desayuno", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s20", "name": "Cereal azul Jona", "cat": "desayuno", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s21", "name": "Té", "cat": "desayuno", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s22", "name": "Panetón", "cat": "desayuno", "price": 16.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s23", "name": "Azúcar 5 kg", "cat": "despensa", "price": 20.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s24", "name": "Arroz Faraón 5 kg", "cat": "despensa", "price": 27.6, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s25", "name": "Aceite", "cat": "despensa", "price": 6.1, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s26", "name": "Fideos spaghetti 950 g x2 (promo)", "cat": "despensa", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s27", "name": "Tallarín linguini 1 kg Don Vittorio", "cat": "despensa", "price": 10.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s28", "name": "Fideos para sopa", "cat": "despensa", "price": 1.5, "qty": 4, "status": "need", "inCart": false, "note": ""}, {"id": "s29", "name": "Lenteja bebé marrón 1 kg", "cat": "despensa", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s30", "name": "Harina", "cat": "despensa", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s31", "name": "Atún", "cat": "despensa", "price": 5.8, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s32", "name": "Pomarola", "cat": "despensa", "price": 3.5, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s33", "name": "Aceituna", "cat": "despensa", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s34", "name": "Durazno en lata", "cat": "despensa", "price": 8.5, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s35", "name": "Puré de manzana", "cat": "despensa", "price": 8.5, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s36", "name": "Pasas", "cat": "despensa", "price": 15, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s37", "name": "Mazamorra", "cat": "despensa", "price": 3.8, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s38", "name": "Ajinomen", "cat": "despensa", "price": 1.6, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s39", "name": "Mayonesa 850 g", "cat": "salsas", "price": 13.6, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s40", "name": "Ketchup Alacena 380 g", "cat": "salsas", "price": 4.7, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s41", "name": "BBQ 360 g", "cat": "salsas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s42", "name": "Mostaza Alacena 400 g", "cat": "salsas", "price": 5.5, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s43", "name": "Aderezo", "cat": "salsas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s44", "name": "Doña Gusta", "cat": "salsas", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s45", "name": "Ajinosillao", "cat": "salsas", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s46", "name": "Sal de cocina", "cat": "salsas", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s47", "name": "Leche 1 L caja", "cat": "lacteos", "price": 16.2, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s48", "name": "Yogurt", "cat": "lacteos", "price": 10.7, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s49", "name": "Huevos", "cat": "lacteos", "price": 22.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s50", "name": "Queso fresco light", "cat": "lacteos", "price": 13.49, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s51", "name": "Queso (Danlac chocolate)", "cat": "lacteos", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s52", "name": "Hot dog x15", "cat": "carnes", "price": 12.9, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s53", "name": "Jamonada", "cat": "carnes", "price": 11.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s54", "name": "Pollo (Maty)", "cat": "carnes", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s55", "name": "Carne molida 500 g", "cat": "carnes", "price": 15.9, "qty": 3, "status": "need", "inCart": false, "note": ""}, {"id": "s56", "name": "Bistec", "cat": "carnes", "price": 16.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s57", "name": "Huachana", "cat": "carnes", "price": 4.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s58", "name": "Cabanossi", "cat": "carnes", "price": 3.5, "qty": 3, "status": "need", "inCart": false, "note": ""}, {"id": "s59", "name": "Apanado de pollo", "cat": "carnes", "price": 3, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s60", "name": "Chorizo", "cat": "carnes", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s61", "name": "Papas 2 kg", "cat": "verduras", "price": 2.79, "qty": 2, "status": "need", "inCart": false, "note": ""}, {"id": "s62", "name": "Verduras (Maty)", "cat": "verduras", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s63", "name": "Frugos 1.5 L", "cat": "bebidas", "price": 17.45, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s64", "name": "Jugo del Valle", "cat": "bebidas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s65", "name": "Coca-Cola", "cat": "bebidas", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s66", "name": "Vino", "cat": "bebidas", "price": 29.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s67", "name": "Zuko", "cat": "bebidas", "price": 1.15, "qty": 4, "status": "need", "inCart": false, "note": ""}, {"id": "s68", "name": "Gatorade", "cat": "bebidas", "price": 2.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s69", "name": "Galletas soda", "cat": "snacks", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s70", "name": "Galletas varias", "cat": "snacks", "price": null, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s71", "name": "Galleta integral", "cat": "snacks", "price": null, "qty": 1, "status": "archived", "inCart": false, "note": ""}, {"id": "s72", "name": "Glasita galletas", "cat": "snacks", "price": 8.4, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s73", "name": "Galleta de agua", "cat": "snacks", "price": 4.9, "qty": 1, "status": "need", "inCart": false, "note": ""}, {"id": "s74", "name": "Chips Ahoy", "cat": "snacks", "price": 7.5, "qty": 1, "status": "need", "inCart": false, "note": ""}], "notes": "Precios de pasta: Cabello 2 · Lingüini x2 4.4 · Spaghetti 7 · Lingüini grueso 4.4 · Grano de oro x2 1.5 · Pasta corta 1.5", "updatedAt": 0};
+let state=null;
+let ui={tab:"need",cat:"all",q:"",hideCart:false};
+let loaded=false;
+const LS_STATE="groceries-state-v1", LS_UI="groceries-ui-v1";
+
+try{const u=JSON.parse(localStorage.getItem(LS_UI)||"null"); if(u) ui=Object.assign(ui,u,{q:""});}catch(e){}
+try{const s=JSON.parse(localStorage.getItem(LS_STATE)||"null"); if(s&&Array.isArray(s.items)){state=normalize(s);}}catch(e){}
+if(!state) state=normalize(SEED);
+
+function normalize(d){
+  const items=(Array.isArray(d.items)?d.items:[]).map(x=>({
+    id:String(x.id||newId()), name:String(x.name||"Producto"), cat:String(x.cat||"otros"),
+    price:(typeof x.price==="number"&&isFinite(x.price))?x.price:null,
+    qty:Math.max(1,parseInt(x.qty,10)||1), status:x.status==="archived"?"archived":"need",
+    inCart:!!x.inCart, note:String(x.note||"")
+  }));
+  return {items,notes:String(d.notes||""),updatedAt:Number(d.updatedAt)||0};
+}
+function saveUI(){try{localStorage.setItem(LS_UI,JSON.stringify({tab:ui.tab,cat:ui.cat,hideCart:ui.hideCart}));}catch(e){}}
+
+/* ---------- sync ---------- */
+let ref=null, dirty=false, writing=false, timer=null, readOnly=false, mode="pending";
+function setStatus(s,text){const el=$("status"); el.dataset.s=s; el.textContent=text;}
+function commit(){
+  state.updatedAt=Date.now();
+  try{localStorage.setItem(LS_STATE,JSON.stringify(state));}catch(e){}
+  render();
+  if(ref&&!readOnly){dirty=true; setStatus("busy","Guardando"); clearTimeout(timer); timer=setTimeout(flush,700);}
+}
+async function flush(){
+  if(writing||!ref) return;
+  writing=true; dirty=false;
+  try{
+    await ref.set(JSON.parse(JSON.stringify(state)));
+    if(!dirty) setStatus("ok","Guardado");
+  }catch(e){
+    const c=e&&e.code;
+    if(c==="permission_denied"||c==="not_granted"||c==="unauthenticated"){readOnly=true; setStatus("local","Solo lectura · los cambios quedan en este dispositivo");}
+    else {setStatus("local","Sin guardar · reintentando"); dirty=true; setTimeout(()=>{if(dirty&&!writing)flush();},5000);}
+  }finally{
+    writing=false;
+    if(dirty&&!readOnly) {clearTimeout(timer); timer=setTimeout(flush,400);}
+  }
+}
+function startSync(){ goLocal();
+  try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+  if("serviceWorker" in navigator && location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+function startSyncUnused(){
+  const c=window.claude;
+  if(!c||typeof c.use!=="function"){goLocal();return;}
+  c.use("db").then(db=>{
+    if(!db){goLocal();return;}
+    mode="db";
+    ref=db.doc("grocery/main");
+    ref.onSnapshot(snap=>{
+      if(dirty||writing) return;
+      if(snap.exists){
+        state=normalize(JSON.parse(JSON.stringify(snap.data()||{})));
+        try{localStorage.setItem(LS_STATE,JSON.stringify(state));}catch(e){}
+        setStatus("ok","Sincronizado");
+      }else{
+        setStatus("ok","Listo");
+        if(state.items.length) {dirty=true; flush();}
+      }
+      loaded=true; render();
+    },err=>{setStatus("local","Sin conexión · guardado en este dispositivo"); loaded=true; render();});
+  }).catch(goLocal);
+}
+function goLocal(){mode="local"; loaded=true; setStatus("ok","Guardado en este teléfono"); render();}
+
+/* ---------- render ---------- */
+function lineTotal(it){return (it.price||0)*it.qty;}
+function render(){
+  const need=state.items.filter(i=>i.status==="need");
+  const arch=state.items.filter(i=>i.status==="archived");
+  const total=need.reduce((s,i)=>s+lineTotal(i),0);
+  const cart=need.filter(i=>i.inCart);
+  const cartTotal=cart.reduce((s,i)=>s+lineTotal(i),0);
+  const noPrice=need.filter(i=>i.price==null).length;
+  $("total").textContent=money(total);
+  $("summary").innerHTML=`<b>${need.length}</b> productos · <b>${cart.length}</b> en el carrito (${money(cartTotal)})`+
+    (noPrice?` · <button class="linkish" id="npBtn">${noPrice} sin precio</button>`:"");
+  $("bar").style.width=need.length?(cart.length/need.length*100)+"%":"0";
+  $("n-need").textContent=need.length; $("n-arch").textContent=arch.length;
+  $("tab-need").setAttribute("aria-selected",ui.tab==="need"); $("tab-archived").setAttribute("aria-selected",ui.tab==="archived");
+  $("hideWrap").hidden=ui.tab!=="need"; $("hideCart").checked=ui.hideCart;
+  if(document.activeElement!==$("notes")) $("notes").value=state.notes;
+
+  const pool=ui.tab==="need"?need:arch;
+  const counts={}; pool.forEach(i=>counts[i.cat]=(counts[i.cat]||0)+1);
+  $("chips").innerHTML=`<button class="chip" data-cat="all" aria-pressed="${ui.cat==="all"}">Todo ${pool.length}</button>`+
+    CATS.filter(c=>counts[c.id]).map(c=>`<button class="chip" data-cat="${c.id}" aria-pressed="${ui.cat===c.id}">${c.emoji} ${esc(c.label)} ${counts[c.id]}</button>`).join("");
+
+  const q=ui.q.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  let rows=pool.filter(i=>(ui.cat==="all"||i.cat===ui.cat)&&
+    (!q||(i.name+" "+i.note).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").includes(q)));
+  if(ui.tab==="need"&&ui.hideCart) rows=rows.filter(i=>!i.inCart);
+  if(ui.onlyNoPrice) rows=rows.filter(i=>i.price==null);
+
+  const list=$("list");
+  if(!loaded&&!state.items.length){list.innerHTML=`<div class="empty"><p>Cargando tu lista…</p></div>`;return;}
+  if(!rows.length){
+    list.innerHTML=ui.tab==="need"
+      ? `<div class="empty"><p>${pool.length?"Ningún producto coincide.":"No hay nada por comprar."}</p><button class="btn primary" data-act="add" style="max-width:220px">Agregar producto</button></div>`
+      : `<div class="empty"><p>${pool.length?"Ningún producto archivado coincide.":"Aquí van los productos que no necesitas por ahora. Puedes devolverlos cuando quieras."}</p></div>`;
+    if(ui.onlyNoPrice) list.insertAdjacentHTML("afterbegin",`<p class="summary">Mostrando productos sin precio · <button class="linkish" data-act="clearnp">Ver todo</button></p>`);
+    return;
+  }
+  let html=ui.onlyNoPrice?`<p class="summary">Mostrando productos sin precio · <button class="linkish" data-act="clearnp">Ver todo</button></p>`:"";
+  CATS.forEach(c=>{
+    const g=rows.filter(i=>i.cat===c.id);
+    if(!g.length) return;
+    g.sort((a,b)=>(a.inCart-b.inCart)||a.name.localeCompare(b.name,"es"));
+    const gt=g.reduce((s,i)=>s+lineTotal(i),0);
+    html+=`<section class="group"><h2><span>${c.emoji} ${esc(c.label)}</span>${ui.tab==="need"?`<small>${money(gt)}</small>`:""}</h2><ul>`;
+    g.forEach(i=>{html+=ui.tab==="need"?rowNeed(i):rowArch(i);});
+    html+=`</ul></section>`;
+  });
+  list.innerHTML=html;
+}
+const ARCH_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></svg>`;
+const DOTS_SVG=`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>`;
+function metaLine(i){
+  const p=i.price==null?`<span class="noprice">Falta precio</span>`:(i.qty>1?`${money(i.price)} × ${i.qty} = ${money(lineTotal(i))}`:money(i.price));
+  return p+(i.note?` · <span class="note">${esc(i.note)}</span>`:"");
+}
+function rowNeed(i){
+  return `<li class="row${i.inCart?" in":""}" data-id="${i.id}">
+    <button class="check" data-act="cart" aria-label="${i.inCart?"Sacar del carrito":"Poner en el carrito"}: ${esc(i.name)}" aria-pressed="${i.inCart}"><i></i></button>
+    <button class="main" data-act="edit"><span class="name">${esc(i.name)}</span><span class="meta">${metaLine(i)}</span></button>
+    <div class="qty"><button data-act="dec" aria-label="Menos">−</button><span>${i.qty}</span><button data-act="inc" aria-label="Más">+</button></div>
+    <button class="icon" data-act="archive" aria-label="Archivar ${esc(i.name)}" title="No se necesita: archivar">${ARCH_SVG}</button>
+  </li>`;
+}
+function rowArch(i){
+  return `<li class="row arch" data-id="${i.id}">
+    <button class="main" data-act="edit"><span class="name">${esc(i.name)}</span><span class="meta">${i.price==null?"Sin precio":money(i.price)}${i.note?` · <span class="note">${esc(i.note)}</span>`:""}</span></button>
+    <button class="restore" data-act="restore">Devolver</button>
+    <button class="icon" data-act="edit" aria-label="Editar ${esc(i.name)}">${DOTS_SVG}</button>
+  </li>`;
+}
+
+/* ---------- actions ---------- */
+const find=id=>state.items.find(i=>i.id===id);
+let undoSnap=null, toastT=null;
+function toast(msg,undoable){
+  $("toastMsg").textContent=msg; $("toastUndo").hidden=!undoable; $("toast").hidden=false;
+  clearTimeout(toastT); toastT=setTimeout(()=>{$("toast").hidden=true; undoSnap=null;},4500);
+}
+function snapshot(){undoSnap=JSON.stringify(state.items);}
+$("toastUndo").onclick=()=>{ if(undoSnap){state.items=JSON.parse(undoSnap); undoSnap=null; commit();} $("toast").hidden=true; };
+
+$("list").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const act=b.dataset.act;
+  if(act==="add") return openEdit(null);
+  if(act==="clearnp"){ui.onlyNoPrice=false; return render();}
+  const li=b.closest("[data-id]"); if(!li) return;
+  const it=find(li.dataset.id); if(!it) return;
+  if(act==="cart"){it.inCart=!it.inCart; commit();}
+  else if(act==="inc"){it.qty++; commit();}
+  else if(act==="dec"){ if(it.qty>1){it.qty--; commit();} else {snapshot(); it.status="archived"; it.inCart=false; commit(); toast(`${it.name} archivado`,true);} }
+  else if(act==="archive"){snapshot(); it.status="archived"; it.inCart=false; commit(); toast(`${it.name} archivado`,true);}
+  else if(act==="restore"){snapshot(); it.status="need"; it.inCart=false; commit(); toast(`${it.name} de vuelta en la lista`,true);}
+  else if(act==="edit"){openEdit(it);}
+});
+document.querySelector(".tabs").addEventListener("click",e=>{
+  const b=e.target.closest("[data-tab]"); if(!b) return;
+  ui.tab=b.dataset.tab; ui.cat="all"; ui.onlyNoPrice=false; saveUI(); render(); window.scrollTo({top:0});
+});
+$("chips").addEventListener("click",e=>{const b=e.target.closest("[data-cat]"); if(!b) return; ui.cat=b.dataset.cat; saveUI(); render();});
+$("q").addEventListener("input",e=>{ui.q=e.target.value; render();});
+$("hideCart").addEventListener("change",e=>{ui.hideCart=e.target.checked; saveUI(); render();});
+$("summary").addEventListener("click",e=>{ if(e.target.id==="npBtn"){ui.tab="need"; ui.cat="all"; ui.onlyNoPrice=true; render(); $("list").scrollIntoView({behavior:"smooth"});} });
+let notesT=null;
+$("notes").addEventListener("input",e=>{clearTimeout(notesT); notesT=setTimeout(()=>{state.notes=e.target.value; commit();},800);});
+$("notes").addEventListener("blur",e=>{ if(e.target.value!==state.notes){clearTimeout(notesT); state.notes=e.target.value; commit();} });
+
+/* edit sheet */
+$("fCat").innerHTML=CATS.map(c=>`<option value="${c.id}">${c.emoji} ${esc(c.label)}</option>`).join("");
+let editing=null;
+function openEdit(it){
+  editing=it;
+  $("editTitle").textContent=it?"Editar producto":"Agregar producto";
+  $("fName").value=it?it.name:""; $("fCat").value=it?it.cat:(ui.cat!=="all"?ui.cat:"despensa");
+  $("fPrice").value=it&&it.price!=null?it.price:""; $("fQty").value=it?it.qty:1; $("fNote").value=it?it.note:"";
+  $("editExtra").hidden=!it;
+  if(it) $("archEdit").textContent=it.status==="archived"?"Devolver a la lista":"Archivar";
+  $("editDlg").showModal();
+  if(!it) setTimeout(()=>$("fName").focus(),50);
+}
+$("cancelEdit").onclick=()=>$("editDlg").close();
+$("editForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("fName").value.trim(); if(!name){$("fName").focus();return;}
+  const pv=$("fPrice").value.trim().replace(",",".");
+  const price=pv===""?null:Math.max(0,parseFloat(pv)); 
+  const data={name,cat:$("fCat").value,price:isFinite(price)?price:null,qty:Math.max(1,parseInt($("fQty").value,10)||1),note:$("fNote").value.trim()};
+  if(editing){Object.assign(editing,data);}
+  else{
+    const dup=state.items.find(i=>i.name.toLowerCase()===name.toLowerCase());
+    if(dup){Object.assign(dup,data,{status:"need"}); toast(`${dup.name} ya estaba guardado, se actualizó`,false);}
+    else state.items.push(Object.assign({id:newId(),status:"need",inCart:false},data));
+    if(ui.tab!=="need"){ui.tab="need";}
+  }
+  $("editDlg").close(); commit();
+});
+$("archEdit").onclick=()=>{ if(!editing) return; snapshot(); const to=editing.status==="archived"?"need":"archived"; editing.status=to; editing.inCart=false; $("editDlg").close(); commit(); toast(to==="archived"?`${editing.name} archivado`:`${editing.name} de vuelta en la lista`,true); };
+$("delEdit").onclick=()=>{ if(!editing) return; snapshot(); const n=editing.name; state.items=state.items.filter(i=>i!==editing); $("editDlg").close(); commit(); toast(`${n} eliminado`,true); };
+$("addBtn").onclick=()=>openEdit(null);
+
+/* finish trip */
+$("finishBtn").onclick=()=>{
+  const inCart=state.items.filter(i=>i.inCart);
+  if(!inCart.length){toast("El carrito está vacío",false);return;}
+  snapshot(); inCart.forEach(i=>i.inCart=false); commit();
+  toast(`Compra terminada · ${inCart.length} productos quitados del carrito`,true);
+};
+
+/* share */
+function shareText(){
+  const need=state.items.filter(i=>i.status==="need"&&!i.inCart);
+  let t="🛒 Lista de compras\n";
+  CATS.forEach(c=>{
+    const g=need.filter(i=>i.cat===c.id).sort((a,b)=>a.name.localeCompare(b.name,"es")); if(!g.length) return;
+    t+=`\n${c.emoji} ${c.label}\n`;
+    g.forEach(i=>{t+=`• ${i.name}${i.qty>1?" x"+i.qty:""}${i.price!=null?" — "+money(lineTotal(i)):""}${i.note?" ("+i.note+")":""}\n`;});
+  });
+  t+=`\nTotal estimado: ${money(need.reduce((s,i)=>s+lineTotal(i),0))}`;
+  return t;
+}
+$("shareBtn").onclick=()=>{$("shareText").value=shareText(); $("copyShare").textContent="Copiar"; $("shareDlg").showModal();};
+$("closeShare").onclick=()=>$("shareDlg").close();
+$("copyShare").onclick=async()=>{
+  const ta=$("shareText");
+  try{await navigator.clipboard.writeText(ta.value); $("copyShare").textContent="Copiado";}
+  catch(e){ta.focus(); ta.select(); try{document.execCommand("copy"); $("copyShare").textContent="Copiado";}catch(_){$("copyShare").textContent="Selecciona y copia";}}
+};
+
+/* backup */
+$("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,1)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="compras-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{ const d=JSON.parse(await f.text()); if(!Array.isArray(d.items)) throw 0;
+    snapshot(); state=normalize(d); commit(); toast("Copia restaurada",true);
+  }catch(_){ toast("Ese archivo no es una copia válida",false); }
+  e.target.value="";
+};
+render();
+startSync();
+})();
+</script>
+</body>
+</html>
